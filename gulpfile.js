@@ -7,6 +7,7 @@ const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const mediaquery = require('postcss-combine-media-query');
 const cssnano = require('cssnano');
+const htmlMinify = require('html-minifier');
 
 // Инициализация сервера
 function serve() {
@@ -19,11 +20,31 @@ function serve() {
 
 // Сборка HTML
 function html() {
-  return gulp
-    .src('src/**/*.html') // Что собирать
-    .pipe(plumber()) // Надежнее собирает код
-    .pipe(gulp.dest('dist/')) // Куда собирать
-    .pipe(browserSync.reload({ stream: true })); // Сервер перезагружает страницу браузера
+  const options = {
+    removeComments: true, // Удалит комментарии
+    removeRedundantAttributes: true, // Удалит атрибут, если его значение дублирует значение по умолчанию
+    removeScriptTypeAttributes: true, // Удалит type="text/javascript" из тега script
+    removeStyleLinkTypeAttributes: true, // Удалит type="text/css" из тегов style и link
+    sortClassName: true, // Отсортирует классы по частоте применения
+    useShortDoctype: true, // Заменит doctype запись на короткую согласно документации HTML5
+    collapseWhitespace: true, // Удалит лишние пробелы
+    minifyCSS: true, // Минифицирует встроенный css-код
+    keepClosingSlash: true, // Закроет все одиночные элементы слешем
+  };
+  return (
+    gulp
+      .src('src/**/*.html') // Что собирать
+      .pipe(plumber()) // Надежнее собирает код
+      // Настройки для постпроцессинга
+      .on('data', function (file) {
+        const buferFile = Buffer.from(
+          htmlMinify.minify(file.contents.toString(), options)
+        );
+        return (file.contents = buferFile);
+      })
+      .pipe(gulp.dest('dist/')) // Куда собирать
+      .pipe(browserSync.reload({ stream: true }))
+  ); // Сервер перезагружает страницу браузера
 }
 
 // Сборка CSS
