@@ -5,6 +5,7 @@ const del = require('del');
 const browserSync = require('browser-sync').create();
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
+const mediaquery = require('postcss-combine-media-query');
 
 // Инициализация сервера
 function serve() {
@@ -26,7 +27,11 @@ function html() {
 
 // Сборка CSS
 function css() {
-  const plugins = [autoprefixer()]; // Плагины для поспроцессинга
+  // Плагины для поспроцессинга
+  const plugins = [
+    autoprefixer(), // Добавит вендорные префиксы
+    mediaquery(), // Склеит все медиазапросы в итоговом бандле
+  ];
   return gulp
     .src('src/blocks/**/*.css') // Что собирать
     .pipe(plumber()) // Надежнее собирает код

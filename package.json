@@ -27,6 +27,7 @@
     "gulp-plumber": "^1.2.1",
     "gulp-postcss": "^9.0.1",
     "postcss": "^8.4.32",
+    "postcss-combine-media-query": "^1.0.1",
     "prettier": "^2.8.7",
     "stylelint": "^15.4.0"
   }
