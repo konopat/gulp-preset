@@ -3,6 +3,8 @@ const concat = require('gulp-concat-css');
 const plumber = require('gulp-plumber');
 const del = require('del');
 const browserSync = require('browser-sync').create();
+const postcss = require('gulp-postcss');
+const autoprefixer = require('autoprefixer');
 
 // Инициализация сервера
 function serve() {
@@ -24,10 +26,12 @@ function html() {
 
 // Сборка CSS
 function css() {
+  const plugins = [autoprefixer()]; // Плагины для поспроцессинга
   return gulp
     .src('src/blocks/**/*.css') // Что собирать
     .pipe(plumber()) // Надежнее собирает код
     .pipe(concat('bundle.css')) // Склеивает все файлы в один бандл
+    .pipe(postcss(plugins)) // Постпроцессинг CSS с помощью перечисленных ранее плагинов
     .pipe(gulp.dest('dist/')) // Куда собирать
     .pipe(browserSync.reload({ stream: true })); // Сервер перезагружает страницу браузера
 }
